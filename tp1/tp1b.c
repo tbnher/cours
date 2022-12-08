@@ -5,6 +5,8 @@
 // dès que la pile sera pleine
 #define PAS_ALLOCATION 5
 
+typedef int element_t;
+
 // Une pile de taille fixe
 typedef struct {
     // un pointeur vers un tableau d'éléments
@@ -37,15 +39,16 @@ int pile_variable_est_vide(const pile_variable_t *pile){
 ///
 /// Retourne 0 si l'élément a pu être ajouté, -1 sinon
 /// (en cas de pile pleine par exemple)
+
 int pile_variable_empiler(pile_variable_t *pile, element_t element){
-    if (pile->sommet>=pile->taille){
-        element_t* p = realloc(pile->pile,sizeof(element)*(pile->taille+PAS_ALLOCATION));
-        if (p == null){
-            return -1;
-        }
-        pile->pile = p;
+    if(pile->sommet > pile->taille) {
+        element_t* canRealloc = realloc(pile->pile, (pile->taille + PAS_ALLOCATION) * sizeof(element_t));
+        if(canRealloc==NULL) return -1;
+        pile->taille = pile->taille + PAS_ALLOCATION;
+        pile->pile = canRealloc;
     }
-    pile->pile[pile->sommet]=element;
+    pile->pile[pile->sommet] = element;
+    pile->sommet++;
     return 0;
 }
 
@@ -54,25 +57,32 @@ int pile_variable_empiler(pile_variable_t *pile, element_t element){
 ///
 /// Retourne 0 en cas de succès, -1 sinon
 /// (si la pile était vide par exemple)
-int pile_variable_depiler(pile_variable_t *pile, element_t *p_element)
-    if (pile_variable_est_vide(pile)){
-        return -1;
+int pile_variable_depiler(pile_variable_t *pile, element_t *p_element){
+    if(pile_variable_est_vide(pile)) return -1;
+    int free = pile->taille - pile->sommet;
+    if(free>= 2*PAS_ALLOCATION){
+        pile->pile = realloc(pile->pile, (pile->sommet + PAS_ALLOCATION) * sizeof(element_t));
     }
-    free(pile->pile[pile->sommet])
-    realloc(sizeof(element)*--pile->taille)
-    return ? 0 : -1;
-/// Affiche les éléments contenus dans la pile
-void pile_variable_afficher(const pile_variable_t *pile)
-{
-    for (int i = 0; i < pile->sommet; i++) {
-        printf("%d",pile->pile[i]);
-    }
+     pile->sommet--;
+    *p_element = pile->pile[pile->sommet];
+    pile->pile[pile->sommet] =0;
+    return 0;
+
 }
     
-/// Detruit la pile
-void pile_variable_detruire(pile_variable_t *pile);
-{
+void pile_variable_afficher(const pile_variable_t *pile){
+printf("Pile variable\n");
+printf("%d",pile->pile[0]);
+for(int i = 1; i < pile->sommet; i++){
+    printf(", %d", pile->pile[i]);
+}
+    printf("\n");
 
+}
+
+/// Detruit la pile
+void pile_variable_detruire(pile_variable_t *pile){
+    free(pile->pile);
 }
 
 
