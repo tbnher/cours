@@ -41,58 +41,76 @@ close(source);
 // extrait en cas de succès
 
 int extrait_fichier(int fd_archive){
+    uint8_t fileNameSize = 0;
+    char fileName[512];
+    uint64_t fileSize = 0;
 
-    char tableau[10];
+    if (read(fd_archive, &fileNameSize, sizeof(uint8_t)) == -1) {
+        perror("problème de taille de nom du fichier\n");
+        return -1;
+    };
 
-    if(read(fd_archive,tableau,1)==-1){
-        perror("problème d'archivage");
+    if (read(fd_archive, fileName, fileNameSize) == -1) {
+        perror("problème de nom de fichier\n");
+        return -1;
+    };
+    fileName[fileNameSize]='\0';
+
+    if (read(fd_archive, &fileSize, sizeof(uint64_t)) == -1) {
+        perror("problème de taille du fichier\n");
+        return -1;
+    };
+
+    printf("%s\n",fileName);
+
+    int fileDestination = open(fileName, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if (fileDestination == -1) {
+        perror("problème de destination extrait\n");
         return -1;
     }
 
-    int sizeOfName = tableau[0];
 
-    if(read(fd_archive,tableau,sizeOfName)==-1){
-        perror("problème création du tableau");
+    if (copier(fd_archive, fileDestination, fileSize) == -1) {
+        perror("problème de copie extrait\n");
         return -1;
     }
 
-    //char name = tableau[1];
-
-    if(read(fd_archive,tableau,6)==-1){
-        perror("problème de taille de fichier");
+    if (close(fileDestination) == -1) {
+        perror("problème close");
         return -1;
     }
 
-    //const char* fileName = "/home/infoetu/nathan.fontaine.etu/Bureau/S3/tp2/test";
-    char path = "/home/infoetu/nathan.fontaine.etu/Bureau/S3/tp2/test";
-    int fd_dest = open(path,O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    printf("%d\n",fd_dest);
-    if(fd_dest==-1){
-        perror("problème de création de fichier");
-        return -1;
-    }
-
-    int sizeOfFile = tableau[2];
-
-    int sizeOfRead = read(fd_archive,tableau,sizeOfFile);
-    if(sizeOfRead==-1){
-        perror("problème de lecture du contenu");
-        return -1;
-    }
-
-    int res = write(fd_dest,tableau,sizeOfRead);
-    if(res==-1){
-        perror("problème d'écriture");
-        return -1;
-    }
-    return res;
-
+  return fileSize;
 }
+
+
 
 // Extrait l'archive dans le répertoire courant.
 //
 // Retourne -1 en cas d'erreur, le nombre de fichiers créés en cas de
 // succès.
 int extrait_archive(const char *archive){
-    return 0;
+    uint32_t nbFiles = 0;
+
+    int archiveSource = open(archive, O_RDONLY, 0666);
+    if (archiveSource == -1){
+        perror("pas de fichier source");
+        return -1;
+    }
+
+    if (read(archiveSource, &nbFiles, sizeof(uint32_t)) == -1){
+        perror("pas de fichier archive");
+        return -1;
+    }
+
+    for (uint32_t fileNumber = 0; fileNumber < nbFiles; fileNumber += 1) {
+        if (extrait_fichier(archiveSource)==-1){
+            perror("problème d'extraction du fichier");
+            return -1;
+        };
+    }
+
+    close(archiveSource);
+    
+    return nbFiles;
 }
