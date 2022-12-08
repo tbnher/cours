@@ -77,7 +77,6 @@ for(int i = 1; i < pile->sommet; i++){
     printf(", %d", pile->pile[i]);
 }
     printf("\n");
-
 }
 
 /// Detruit la pile
