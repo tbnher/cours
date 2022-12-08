@@ -67,7 +67,7 @@ int pile_variable_depiler(pile_variable_t *pile, element_t *p_element){
     *p_element = pile->pile[pile->sommet];
     pile->pile[pile->sommet] =0;
     return 0;
-
+    
 }
     
 void pile_variable_afficher(const pile_variable_t *pile){
@@ -131,4 +131,10 @@ void test_pile_variable(void) {
     assert(pile_variable_est_vide(&pile));
 
     pile_variable_detruire(&pile);
+}
+
+int main(void)
+{
+    test_pile_variable();
+    return 0;
 }

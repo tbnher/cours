@@ -1,4 +1,4 @@
-#include <stdio.io>
+#include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -26,7 +26,7 @@ int copier(int source, int destination, int taille){
         return 1;
     }
 
-    close(source);
+close(source);
     close(destination);
 
     return res;
@@ -45,30 +45,30 @@ int extrait_fichier(int fd_archive){
     char tableau[10];
 
     if(read(fd_archive,tableau,1)==-1){
-        perror("prob archive");
+        perror("problème d'archivage");
         return -1;
     }
 
     int sizeOfName = tableau[0];
 
     if(read(fd_archive,tableau,sizeOfName)==-1){
-        perror("mdr");
+        perror("problème création du tableau");
         return -1;
     }
 
     //char name = tableau[1];
 
     if(read(fd_archive,tableau,6)==-1){
-        perror("prob taille fichier");
+        perror("problème de taille de fichier");
         return -1;
     }
 
-    //const char* fileName = "/home/infoetu/nathan.fontaine.etu/s3/test";
-
-    int fd_dest = open("/home/infoetu/nathan.fontaine.etu/test",O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    //const char* fileName = "/home/infoetu/nathan.fontaine.etu/Bureau/S3/tp2/test";
+    char path = "/home/infoetu/nathan.fontaine.etu/Bureau/S3/tp2/test";
+    int fd_dest = open(path,O_WRONLY | O_CREAT | O_TRUNC, 0666);
     printf("%d\n",fd_dest);
     if(fd_dest==-1){
-        perror("prob creation fichier");
+        perror("problème de création de fichier");
         return -1;
     }
 
@@ -76,13 +76,13 @@ int extrait_fichier(int fd_archive){
 
     int sizeOfRead = read(fd_archive,tableau,sizeOfFile);
     if(sizeOfRead==-1){
-        perror("prob lecture contenu");
+        perror("problème de lecture du contenu");
         return -1;
     }
 
     int res = write(fd_dest,tableau,sizeOfRead);
     if(res==-1){
-        perror("prob ecriture");
+        perror("problème d'écriture");
         return -1;
     }
     return res;
@@ -93,4 +93,6 @@ int extrait_fichier(int fd_archive){
 //
 // Retourne -1 en cas d'erreur, le nombre de fichiers créés en cas de
 // succès.
-int extrait_archive(const char *archive);
+int extrait_archive(const char *archive){
+    return 0;
+}

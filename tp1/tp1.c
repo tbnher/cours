@@ -1,5 +1,7 @@
 #include <stdio.h>
+
 typedef int element_t;
+
 #define TAILLE_PILE 5
 
 // Une pile de taille fixe
