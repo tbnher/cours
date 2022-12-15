@@ -64,14 +64,8 @@ int afficher_repertoire(const char *chemin){
     while((file = readdir(directory))!=NULL){
     
         strcpy(cheminFinal,chemin);
-        struct stat buf; 
-        if(stat(chemin, &buf)==-1){
-            perror("problème chemin");
-            return -1;
-        }
-        if(!S_ISDIR(buf.st_mode)){
+        
         snprintf(cheminFinal,4096,"%s/%s",chemin,"/");
-        }
         snprintf(cheminFinal,4096,"%s/%s",chemin,file->d_name);
         afficher_infos(cheminFinal);
     }    
