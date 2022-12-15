@@ -68,7 +68,7 @@ int extrait_fichier(int fd_archive){
     }
 
     if (read(fd_archive,fileName,fileNameSize)==-1){
-        perror("pbolème nom du fichier\n"):
+        perror("pbolème nom du fichier\n");
         return -1;
     }
 
@@ -158,10 +158,10 @@ int copierArchiver(int source, int destination){
     uint32_t totalNumberWrite = 0;
 
     int bufferOffset = 0;
-    while (bufferOffset < taille){
-        int neededBufferSize = BUFFER_SIZE;
-        if (bufferOffset + BUFFER_SIZE > taille){
-            neededBufferSize = taille - BUFFER_SIZE;
+    int neededBufferSize = BUFFER_SIZE;
+    while (bufferOffset < sourceFileSize){
+        if (sourceFileSize - bufferOffset < BUFFER_SIZE){
+            neededBufferSize = sourceFileSize - bufferOffset;
         }
         int numberRead = read(source, buffer, neededBufferSize);
         if (numberRead == -1) {
