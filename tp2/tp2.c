@@ -58,6 +58,7 @@ int copierDesarchiver(int source, int destination, int taille){
 // extrait en cas de succès
 
 int extrait_fichier(int fd_archive){
+    int totalwritten = 0;
     uint8_t fileNameSize = 0;
     char fileName[512];
     uint64_t fileSize = 0;
@@ -83,7 +84,7 @@ int extrait_fichier(int fd_archive){
         return -1;
     }
 
-    if (copier(fd_archive,fileDestination,fileSize)==-1){
+    if (copierDesarchiver(fd_archive,fileDestination,fileSize)==-1){
         perror("problème de copie extrait\n");
         return -1;
     }
@@ -92,6 +93,7 @@ int extrait_fichier(int fd_archive){
         perror("problème close\n");
         return -1;
     }
+    return total_written;
 }
 
 // Extrait l'archive dans le répertoire courant.
@@ -112,7 +114,7 @@ int extrait_archive(const char *archive){
         return -1;
     }
 
-    for (uint32_t fileNumber = 0;fileNumber < nbFiles;fileNumber+1){
+    for (uint32_t fileNumber = 0;fileNumber < nbFiles;fileNumber+=1){
         if (extrait_fichier(archiveSource)==-1){
             perror("problème extraction fichier\n");
             return -1;
@@ -213,7 +215,7 @@ int archive_un_fichier(int fd_archive, const char *fichier){
         return -1;
     }
 
-    if (copierArchive(sourceFile, fd_archive) == -1) {
+    if (copierArchiver(sourceFile, fd_archive) == -1) {
         return -1;
     }
 
@@ -260,9 +262,14 @@ int creer_archive(const char *fichier_archive, char **liste_fichiers, uint32_t n
     return res;
 }
 
-int main(int argc, char const *argv[])
+int main(void)
 {
+    int filesourcedesarch1 = open("../test/fichiers_binaires.arch",O_RDONLY,0666);
+    int filesourcedesarch2 = open("../test/fichiers_textes.arch",O_RDONLY,0666);
     
+    extrait_fichier(filesourcedesarch1);
+    extrait_fichier(filesourcedesarch2);
+
 }
 
 // int main(int argc, char **argv) {
