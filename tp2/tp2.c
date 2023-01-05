@@ -115,7 +115,7 @@ int extrait_archive(const char *archive){
 
 int main(void)
 {
-    char chaine[] = "fichiers_binaires.arch";
+    char chaine[] = "test/fichiers_binaires.arch";
     int result = extrait_archive(chaine);
     if (result == -1){
         return -1;
