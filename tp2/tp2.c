@@ -2,20 +2,49 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#define BUFFER_SIZE 1000
 // Copie un fichier désigné par le descripteur source
 // dans un fichier désigné par le descripteur destination en copiant taille octets
 // retourne le nombre d'octets copiés en cas de succès, -1 en cas d'erreur
 int copier(int source, int destination, int taille){
-    int tab[1024];
-    int result_l = read(source, &tab, taille);
-    if(result_l == -1){
+
+    if (source == -1) {
+        fprintf(stderr, "copie: La destination n'existe pas\n");
         return -1;
     }
-    int result_r = write(destination, &tab, taille);
-    if(result_r == -1){
+    if (destination == -1) {
+        fprintf(stderr, "copie: La destination n'existe pas\n");
         return -1;
     }
-    return taille;
+
+  uint8_t buffer[BUFFER_SIZE];
+  uint32_t total_written = 0;
+
+  int buffer_offset = 0;
+  int needed_buffer_size = BUFFER_SIZE;
+  while (buffer_offset < taille) {
+    if (taille - buffer_offset < BUFFER_SIZE) {
+      needed_buffer_size = taille - buffer_offset;
+    }
+
+    int red = read(source, buffer, needed_buffer_size);
+    if (red == -1) {
+      perror("copie: impossible de lire la source");
+      return -1;
+    }
+
+    int written = write(destination, buffer, red);
+    if (written == -1) {
+      perror("copie: impossible de lire la source");
+      return -1;
+    }
+
+    buffer_offset += BUFFER_SIZE;
+    total_written += written;
+  }
+
+  return total_written;
 }
 
 // Extrait le prochain fichier contenu dans l'archive. Si un fichier
@@ -115,7 +144,7 @@ int extrait_archive(const char *archive){
 
 int main(void)
 {
-    char chaine[] = "test/fichiers_binaires.arch";
+    char chaine[] = "fichiers_binaires.arch";
     int result = extrait_archive(chaine);
     if (result == -1){
         return -1;
