@@ -61,13 +61,16 @@ int pile_variable_depiler(pile_variable_t *pile, element_t *p_element){
     if(pile_variable_est_vide(pile)) return -1;
     int free = pile->taille - pile->sommet;
     if(free>= 2*PAS_ALLOCATION){
-        pile->pile = realloc(pile->pile, (pile->sommet + PAS_ALLOCATION) * sizeof(element_t));
+        element_t* real = realloc(pile->pile, (pile->taille + PAS_ALLOCATION) * sizeof(element_t));
+        if(real==NULL){
+            perror("erreur realloc");
+            return -1;
+        }
     }
-     pile->sommet--;
+    pile->sommet--;
     *p_element = pile->pile[pile->sommet];
     pile->pile[pile->sommet] =0;
     return 0;
-    
 }
     
 void pile_variable_afficher(const pile_variable_t *pile){
