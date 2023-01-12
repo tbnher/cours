@@ -8,24 +8,6 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/wait.h>
-// Affiche les informations sur le fichier dont le chemin est passé en
-// paramètre sur la sortie standard
-//
-// Retourne 0 en cas de succès, -1 en cas d'échec
-int afficher_infos(const char *chemin);
-
-
-// Parcours le répertoire dont le chemin est passé en paramètre
-// et affiche les informations sur les fichiers qu'il contient
-// sur la sortie standard
-//
-// retour 0 en cas de succè, -1 en cas d'échec
-int afficher_repertoire(const char *chemin);
-
-
-// Lance un traitement long dans un processus et retourne le pid du
-// processus nouvellement créé ou -1 en cas d'erreur
-int lancer_traitement(const char *chemin);
 
 int afficher_infos(const char *chemin){
 
@@ -74,11 +56,6 @@ int afficher_repertoire(const char *chemin){
     return 0;
 }
 
-
-
-
-
-
 void traiter(void) {
     // initialise un générateur aléatoire à partir du pid du processus
     srand(getpid());
@@ -90,7 +67,6 @@ void traiter(void) {
 
 
 int lancer_traitement(const char *chemin){
-
     int ppid = fork();
     if(ppid == 0){
         afficher_repertoire(chemin);
@@ -98,7 +74,6 @@ int lancer_traitement(const char *chemin){
         exit(0);
     } 
     return ppid;
-
 }
 
 
